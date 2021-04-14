@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     int maxHealth = 100;
+
+    int currentStamina, currentHealth;
     #endregion
 
     #region ClassParameter
@@ -42,12 +44,88 @@ public class PlayerController : MonoBehaviour
     public SliderBar staminaBar;
     #endregion
 
-    int currentStamina, currentHealth;
+    #region Health & Stamina
+    [Header("Health & Stamina")]
+    [SerializeField]
+    int staminaRegenPerSec = 5;
+
+    float staminaRegenTimer = 0;
+    bool canRegenStamina = true;
+
+    [SerializeField]
+    int healthRegenPerSec = 5;
+
+    [SerializeField]
+    float timeBeforeStartHealthRegen = 10;
+
+    float startHealthRegenTimer = 0;
+    float healthRegenTimer = 0;
+    bool canRegenHealth = true;
+
+
+    #endregion
+
+    #region Attack
+    [Header("Attack")]
+
+    public Transform attackPoint;
+
+    [SerializeField]
+    float attackRange = 0.5f;
+
+    [SerializeField]
+    float attackReload = 0.5f;
+    float nextAttackTime = 0f;
+    bool isAttackLoading = false;
+
+    [SerializeField]
+    float attackChargedLoadTime = 1.5f;
+
+    float startAttackLoadTime = 0f;
+
+    [SerializeField]
+    float attackChargedDamageMultiplier = 1.5f;
+
+    [SerializeField]
+    float attackLoadingSpeedMultiplier = 0.5f;
+
+    [SerializeField]
+    int attackBasicStaminaUsed = 10;
+
+    [SerializeField]
+    int attackChargedStaminaUsed = 10;
+
+    public LayerMask enemyLayers;
+    #endregion
+
+    #region Block
+    [Header("Block")]
+
+    [SerializeField]
+    int blockStaminaUsedPerSec = 3;
+
+    [SerializeField]
+    float blockingSpeedMultiplier = 0.5f;
+
+    float blockTimer;
+
+    bool isBlocking = false;
+
+    #endregion
+
+    #region Other
+    [Header("Other")]
+
+    [SerializeField]
+    float yMinLimit = -40;
+
+    bool isUsingSkill = false;
+
     Vector3 forward, right;
-
     Vector3 lastHeading = Vector3.zero, lastMovement = Vector3.zero;
+    Rigidbody rb;
+    #endregion
 
-    // Start is called before the first frame update
     void Start()
     {
         forward = Camera.main.transform.forward;
@@ -60,6 +138,8 @@ public class PlayerController : MonoBehaviour
 
         healthBar.SetMaxValue(maxHealth);
         staminaBar.SetMaxValue(maxStamina);
+
+        rb = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
@@ -69,42 +149,277 @@ public class PlayerController : MonoBehaviour
             transform.forward = lastHeading;
         }
 
-        GetComponent<Rigidbody>().MovePosition(transform.position + (lastMovement * Time.fixedDeltaTime));
+        if(rb)
+        {
+            float speedMultiplier = 1;
 
-        //transform.position += lastMovement;
+            if(isAttackLoading)
+            {
+                speedMultiplier = attackLoadingSpeedMultiplier;
+            }
+            else if(isBlocking)
+            {
+                speedMultiplier = blockingSpeedMultiplier;
+            }
+
+            rb.MovePosition(transform.position + (lastMovement * Time.fixedDeltaTime * speedMultiplier));
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         lastHeading = Vector3.zero;
         lastMovement = Vector3.zero;
 
+        isUsingSkill = false;
+
         if (isPlayerControlled)
         {
-            if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0)
+            CheckInputs();
+        }
+
+        CheckStaminaRegen();
+        ChackHealthRegen();
+
+        CheckVoidDeath();
+
+        canRegenStamina = true;
+        canRegenHealth = true;
+    }
+
+    void CheckInputs()
+    {
+        if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0)
+        {
+            ComputeMove();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TakeDamage(10);
+        }
+
+        CheckAttackInput();
+        CheckBlockInput();
+        
+    }
+
+    void CheckAttackInput()
+    {
+        if(isUsingSkill == true)
+        {
+            if(isAttackLoading)
             {
-                ComputeMove();
+                nextAttackTime = Time.time + attackReload;
+                startAttackLoadTime = 0;
+                isAttackLoading = false;
             }
 
-            if (Input.GetKeyDown(KeyCode.R))
+            return;
+        }
+
+        if (Time.time >= nextAttackTime && Input.GetMouseButtonDown(0) && currentStamina >= attackBasicStaminaUsed)
+        {
+            startAttackLoadTime = Time.time;
+            isAttackLoading = true;
+            Debug.Log("Start attack load");
+
+            canRegenStamina = false;
+            canRegenHealth = false;
+            isUsingSkill = true;
+
+            Debug.Log("Start Load Attack");
+        }
+        else if (isAttackLoading && Input.GetMouseButtonUp(0))
+        {
+            if (Time.time - startAttackLoadTime > attackChargedLoadTime && currentStamina >= attackChargedStaminaUsed)
             {
-                TakeDamage(10);
+                UseStamina(attackChargedStaminaUsed);
+                Attack(true);
+
+                Debug.Log("Release Charged Attack");
+            }
+            else if (currentStamina >= attackBasicStaminaUsed)
+            {
+                UseStamina(attackBasicStaminaUsed);
+                Attack(false);
+
+                Debug.Log("Release Attack");
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            nextAttackTime = Time.time + attackReload;
+            startAttackLoadTime = 0;
+            isAttackLoading = false;
+
+            canRegenStamina = false;
+            canRegenHealth = false;
+
+            isUsingSkill = true;
+        }
+        else if (isAttackLoading)
+        {
+            canRegenStamina = false;
+            canRegenHealth = false;
+
+            isUsingSkill = true;
+
+            Debug.Log("Load Attack");
+        }
+    }
+
+    void CheckBlockInput()
+    {
+        if (isUsingSkill == true)
+        {
+            if(isBlocking)
             {
-                UseStamina(10);
+                isBlocking = false;
             }
+
+
+            return;
+        }
+
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("Start Shield");
+
+            isBlocking = true;
+            isUsingSkill = true;
+            canRegenStamina = false;
+            canRegenHealth = false;
+        }
+        else if (isBlocking && Input.GetMouseButtonUp(1))
+        {
+            Debug.Log("Release Shield");
+
+            isBlocking = false;
+            isUsingSkill = true;
+        }
+        else if (isBlocking)
+        {
+            Debug.Log("Keep Shield");
+            isUsingSkill = true;
+
+            if(currentStamina < blockStaminaUsedPerSec)
+            {
+                isBlocking = false;
+                return;
+            }
+
+            blockTimer += Time.deltaTime;
+            if(blockTimer > 1)
+            {
+                UseStamina(blockStaminaUsedPerSec);
+                blockTimer = 0;
+            }
+
+            canRegenStamina = false;
+            canRegenHealth = false;
+        }
+
+    }
+
+    void CheckVoidDeath()
+    {
+        if (transform.position.y <= yMinLimit)
+        {
+            Die();
+        }
+    }
+
+    void CheckStaminaRegen()
+    {
+        if (canRegenStamina)
+        {
+            staminaRegenTimer += Time.deltaTime;
+
+            if (staminaRegenTimer > 1)
+            {
+                currentStamina += staminaRegenPerSec;
+                if (currentStamina >= maxStamina)
+                {
+                    currentStamina = maxStamina;
+                }
+
+                staminaBar.SetValue(currentStamina);
+
+                staminaRegenTimer = 0;
+            }
+        }
+        else
+        {
+            staminaRegenTimer = 0;
+        }
+    }
+
+    void ChackHealthRegen()
+    {
+        if (canRegenHealth)
+        {
+            startHealthRegenTimer += Time.deltaTime;
+
+            if (startHealthRegenTimer > timeBeforeStartHealthRegen)
+            {
+                healthRegenTimer += Time.deltaTime;
+                if (healthRegenTimer > 1)
+                {
+                    currentHealth += healthRegenPerSec;
+                    if (currentHealth >= maxHealth)
+                    {
+                        currentHealth = maxHealth;
+                    }
+
+                    healthBar.SetValue(currentHealth);
+
+                    healthRegenTimer = 0;
+                }
+
+            }
+        }
+        else
+        {
+            startHealthRegenTimer = 0;
+            healthRegenTimer = 0;
         }
     }
 
     void TakeDamage(int damage)
     {
+        canRegenStamina = false;
+        canRegenHealth = false;
+
+        if(isBlocking)
+        {
+            return;
+        }
+
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
 
         healthBar.SetValue(currentHealth);
+
+        if(currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Respawn();
+    }
+
+    void Respawn()
+    {
+        transform.position = new Vector3(Random.Range(0, 50), 5, Random.Range(0, 50));
+
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+
+        healthBar.SetValue(currentHealth);
+        staminaBar.SetValue(currentStamina);
     }
 
     void UseStamina(int staminaUsed)
@@ -123,5 +438,34 @@ public class PlayerController : MonoBehaviour
         lastHeading = Vector3.Normalize(rightDir + upDir);
 
         lastMovement = lastHeading * moveSpeed;
+    }
+
+    void Attack(bool attackCharged = false)
+    {
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
+
+        foreach(Collider enemy in hitEnemies)
+        {
+            if (enemy.gameObject != gameObject)
+            {
+                if (attackCharged)
+                {
+                    enemy.GetComponent<PlayerController>().TakeDamage((int)(strength * attackChargedDamageMultiplier));
+                    Debug.Log("Patate de forain!!!!!");
+                }
+                else
+                {
+                    enemy.GetComponent<PlayerController>().TakeDamage(strength);
+                }
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint)
+        {
+            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        }
     }
 }
