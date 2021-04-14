@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
@@ -5,6 +7,7 @@ using MLAPI.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace HelloWorld
 {
@@ -123,11 +126,16 @@ namespace HelloWorld
         [Header("Other")]
 
         [SerializeField]
+        List<Vector3> spawnPoints;
+
+        [SerializeField]
         float yMinLimit = -40;
 
         bool isControlled = false;
 
         bool isUsingSkill = false;
+
+        bool isLobby = true;
 
         Vector3 forward, right;
         Vector3 lastHeading = Vector3.zero, lastMovement = Vector3.zero;
@@ -136,6 +144,7 @@ namespace HelloWorld
         Camera cam;
         Vector3 camOffset;
         Transform noRot;
+        Transform canv;
         #endregion
 
         #region Network
@@ -198,8 +207,9 @@ namespace HelloWorld
         public override void NetworkStart()
         {
             noRot = transform.GetChild(0);
-            healthBar = noRot.GetChild(0).GetChild(0).GetComponent<SliderBar>();
-            staminaBar = noRot.GetChild(0).GetChild(1).GetComponent<SliderBar>();
+            canv = noRot.GetChild(0);
+            healthBar = canv.GetChild(0).GetComponent<SliderBar>();
+            staminaBar = canv.GetChild(1).GetComponent<SliderBar>();
 
             Name.OnValueChanged += OnNameChanged;
             Health.OnValueChanged += OnHealthChanged;
@@ -218,9 +228,12 @@ namespace HelloWorld
             healthBar.SetMaxValue(maxHealth);
             staminaBar.SetMaxValue(maxStamina);
 
-            noRot.GetChild(0).GetChild(2).GetComponent<Text>().text = Name.Value;
+            canv.GetChild(2).GetComponent<Text>().text = Name.Value;
             healthBar.SetValue(Health.Value);
             staminaBar.SetValue(Stamina.Value);
+
+            healthBar.gameObject.SetActive(false);
+            staminaBar.gameObject.SetActive(false);
         }
 
         void Start()
@@ -244,7 +257,7 @@ namespace HelloWorld
 
         private void OnNameChanged(string previousvalue, string newvalue)
         {
-            noRot.GetChild(0).GetChild(2).GetComponent<Text>().text = newvalue;
+            canv.GetChild(2).GetComponent<Text>().text = newvalue;
         }
 
         private void OnHealthChanged(int previousvalue, int newvalue)
@@ -312,6 +325,11 @@ namespace HelloWorld
         {
             cam = Camera.main;
             camOffset = cam.transform.position;
+
+            isLobby = !isLobby;
+            healthBar.gameObject.SetActive(!isLobby);
+            staminaBar.gameObject.SetActive(!isLobby);
+
             Respawn();
         }
 
@@ -343,6 +361,12 @@ namespace HelloWorld
             noRot.SetPositionAndRotation(transform.position, Quaternion.identity);
 
             if (!isControlled) return;
+
+            if (isLobby)
+            {
+                Health.Value = maxHealth;
+                Stamina.Value = maxStamina;
+            }
 
             lastHeading = Vector3.zero;
             lastMovement = Vector3.zero;
@@ -535,14 +559,7 @@ namespace HelloWorld
 
         void Respawn()
         {
-            if (SceneManager.GetActiveScene().name == "LobbyScene")
-            {
-                transform.position = new Vector3(Random.Range(-15f, 15f), 10f, Random.Range(-15f, 15f));
-            }
-            else if (SceneManager.GetActiveScene().name == "GameScene")
-            {
-                transform.position = new Vector3(Random.Range(-60f, 60f), 10f, Random.Range(-30f, 50f));
-            }
+            transform.position = isLobby ? new Vector3(Random.Range(-15f, 15f), 1f, Random.Range(-15f, 15f)) : spawnPoints[Random.Range(0, spawnPoints.Count)];
 
             Health.Value = maxHealth;
             Stamina.Value = maxStamina;

@@ -374,11 +374,28 @@ MonoBehaviour:
   attackLoadingSpeedMultiplier: 0.5
   attackBasicStaminaUsed: 10
   attackChargedStaminaUsed: 10
+  knockbackApplyChargedAttack: 300
+  knockbackApplyBasicAttack: 150
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
   blockStaminaUsedPerSec: 3
   blockingSpeedMultiplier: 0.5
+  blockChargedAttackStaminaUsed: 20
+  spawnPoints:
+  - {x: 24, y: 2, z: 30}
+  - {x: 65, y: 2, z: 35}
+  - {x: 23, y: 2, z: 65}
+  - {x: 23, y: 2, z: 0}
+  - {x: 60, y: 2, z: -25}
+  - {x: 0, y: 2, z: 0}
+  - {x: 0, y: 2, z: 30}
+  - {x: -22, y: 2, z: 30}
+  - {x: -60, y: 2, z: 35}
+  - {x: -60, y: 2, z: 0}
+  - {x: -20, y: 2, z: -5}
+  - {x: -58, y: 2, z: -55}
+  - {x: 20, y: 2, z: -45}
   yMinLimit: -40
 --- !u!136 &2502013365328430464
 CapsuleCollider:
@@ -868,7 +885,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 3}
+  m_AnchoredPosition: {x: 0, y: 3.25}
   m_SizeDelta: {x: 400, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2567527016946764582
