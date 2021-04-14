@@ -1,20 +1,20 @@
 m_ProjectFiles:
   m_ManifestFileStatus:
-    m_FilePath: C:/Users/quent/Unity/GameWeek/GameWeek2021/GameWeek 2021/Packages/manifest.json
+    m_FilePath: F:/Projet-Git Perso/GameWeek/GameWeek2021/GameWeek 2021/Packages/manifest.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637539726244362338
-    m_Hash: 1665748769
+      ticks: 637540147216919289
+    m_Hash: 3075756927
   m_LockFileStatus:
-    m_FilePath: C:/Users/quent/Unity/GameWeek/GameWeek2021/GameWeek 2021/Packages/packages-lock.json
+    m_FilePath: F:/Projet-Git Perso/GameWeek/GameWeek2021/GameWeek 2021/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637539726244372296
-    m_Hash: 1280484451
+      ticks: 637540147217794623
+    m_Hash: 788380366
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -25,7 +25,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 1.3.9
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.collab-proxy@1.3.9
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.collab-proxy@1.3.9
       assetPath: Packages/com.unity.collab-proxy
       name: com.unity.collab-proxy
       displayName: Unity Collaborate
@@ -120,7 +120,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 2.0.7
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.rider@2.0.7
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.rider@2.0.7
       assetPath: Packages/com.unity.ide.rider
       name: com.unity.ide.rider
       displayName: JetBrains Rider Editor
@@ -223,7 +223,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 2.0.7
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.visualstudio@2.0.7
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.visualstudio@2.0.7
       assetPath: Packages/com.unity.ide.visualstudio
       name: com.unity.ide.visualstudio
       displayName: Visual Studio Editor
@@ -304,7 +304,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 1.2.3
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.vscode@1.2.3
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ide.vscode@1.2.3
       assetPath: Packages/com.unity.ide.vscode
       name: com.unity.ide.vscode
       displayName: Visual Studio Code Editor
@@ -373,7 +373,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 0.1.0
       source: 5
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.multiplayer.mlapi@3e3aef6aa0
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.multiplayer.mlapi@3e3aef6aa0
       assetPath: Packages/com.unity.multiplayer.mlapi
       name: com.unity.multiplayer.mlapi
       displayName: MLAPI Networking Library
@@ -427,12 +427,150 @@ m_PackageAssets:
         url: 
         revision: 
         path: 
+    - packageId: com.unity.probuilder@4.5.0
+      testable: 0
+      isDirectDependency: 1
+      version: 4.5.0
+      source: 1
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.probuilder@4.5.0
+      assetPath: Packages/com.unity.probuilder
+      name: com.unity.probuilder
+      displayName: ProBuilder
+      author:
+        name: 
+        email: 
+        url: 
+      category: 
+      type: 
+      description: 'Build, edit, and texture custom geometry in Unity. Use ProBuilder
+        for in-scene level design, prototyping, collision meshes, all with on-the-fly
+        play-testing.
+
+
+        Advanced features include UV editing, vertex colors,
+        parametric shapes, and texture blending. With ProBuilder''s model export
+        feature it''s easy to tweak your levels in any external 3D modelling suite.'
+      status: 4
+      errors: []
+      versions:
+        all:
+        - 3.0.0
+        - 3.0.1
+        - 3.0.2
+        - 3.0.3
+        - 3.0.6
+        - 3.0.8
+        - 3.0.9
+        - 3.10.1
+        - 4.0.2
+        - 4.0.3
+        - 4.0.4
+        - 4.0.5
+        - 4.1.0
+        - 4.1.2
+        - 4.2.1
+        - 4.2.2-preview.1
+        - 4.2.2-preview.2
+        - 4.2.3
+        - 4.2.4-preview.0
+        - 4.3.0-preview.0
+        - 4.3.0-preview.1
+        - 4.3.0-preview.2
+        - 4.3.0-preview.4
+        - 4.3.0-preview.6
+        - 4.3.0-preview.7
+        - 4.3.0-preview.8
+        - 4.3.0-preview.9
+        - 4.3.1
+        - 4.4.0-preview.1
+        - 4.4.0
+        - 4.5.0
+        - 5.0.0-pre.7
+        - 5.0.0-pre.10
+        - 5.0.1
+        - 5.0.3
+        compatible:
+        - 4.0.2
+        - 4.0.3
+        - 4.0.4
+        - 4.0.5
+        - 4.1.0
+        - 4.1.2
+        - 4.2.1
+        - 4.2.2-preview.1
+        - 4.2.2-preview.2
+        - 4.2.3
+        - 4.2.4-preview.0
+        - 4.3.0-preview.0
+        - 4.3.0-preview.1
+        - 4.3.0-preview.2
+        - 4.3.0-preview.4
+        - 4.3.0-preview.6
+        - 4.3.0-preview.7
+        - 4.3.0-preview.8
+        - 4.3.0-preview.9
+        - 4.3.1
+        - 4.4.0-preview.1
+        - 4.4.0
+        - 4.5.0
+        - 5.0.0-pre.7
+        - 5.0.0-pre.10
+        - 5.0.1
+        - 5.0.3
+        verified: 4.5.0
+      dependencies:
+      - name: com.unity.settings-manager
+        version: 1.0.3
+      resolvedDependencies:
+      - name: com.unity.settings-manager
+        version: 1.0.3
+      keywords:
+      - 3d
+      - model
+      - mesh
+      - modeling
+      - geometry
+      - shape
+      - cube
+      - blender
+      - max
+      - maya
+      - fbx
+      - obj
+      - level
+      - design
+      - block
+      - greybox
+      - graybox
+      - whitebox
+      - prototype
+      - probuilder
+      registry:
+        id: main
+        name: 
+        url: https://packages.unity.com
+        scopes: []
+        isDefault: 1
+        capabilities: 7
+      hasRegistry: 1
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 637468491200000000
+      documentationUrl: 
+      hasRepository: 1
+      repository:
+        type: git
+        url: git+https://github.com/Unity-Technologies/com.unity.probuilder.git
+        revision: c0048d825082c4ae352d19ea8bb13d5f63cbcde7
+        path: 
     - packageId: com.unity.render-pipelines.universal@10.4.0
       testable: 0
       isDirectDependency: 1
       version: 10.4.0
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.render-pipelines.universal@10.4.0
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.render-pipelines.universal@10.4.0
       assetPath: Packages/com.unity.render-pipelines.universal
       name: com.unity.render-pipelines.universal
       displayName: Universal RP
@@ -541,7 +679,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 1.1.24
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.test-framework@1.1.24
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.test-framework@1.1.24
       assetPath: Packages/com.unity.test-framework
       name: com.unity.test-framework
       displayName: Test Framework
@@ -629,7 +767,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 3.0.4
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.textmeshpro@3.0.4
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.textmeshpro@3.0.4
       assetPath: Packages/com.unity.textmeshpro
       name: com.unity.textmeshpro
       displayName: TextMeshPro
@@ -780,7 +918,7 @@ m_PackageAssets:
       isDirectDependency: 1
       version: 1.4.6
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.timeline@1.4.6
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.timeline@1.4.6
       assetPath: Packages/com.unity.timeline
       name: com.unity.timeline
       displayName: Timeline
@@ -2725,7 +2863,7 @@ m_PackageAssets:
       isDirectDependency: 0
       version: 1.0.6
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ext.nunit@1.0.6
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.ext.nunit@1.0.6
       assetPath: Packages/com.unity.ext.nunit
       name: com.unity.ext.nunit
       displayName: Custom NUnit
@@ -2786,7 +2924,7 @@ m_PackageAssets:
       isDirectDependency: 0
       version: 1.1.0
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.mathematics@1.1.0
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.mathematics@1.1.0
       assetPath: Packages/com.unity.mathematics
       name: com.unity.mathematics
       displayName: Mathematics
@@ -2861,7 +2999,7 @@ m_PackageAssets:
       isDirectDependency: 0
       version: 10.4.0
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.render-pipelines.core@10.4.0
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.render-pipelines.core@10.4.0
       assetPath: Packages/com.unity.render-pipelines.core
       name: com.unity.render-pipelines.core
       displayName: Core RP Library
@@ -2951,6 +3089,7 @@ m_PackageAssets:
         - 7.5.1
         - 7.5.2
         - 7.5.3
+        - 7.6.0
         - 8.0.1
         - 8.1.0
         - 8.2.0
@@ -2966,6 +3105,7 @@ m_PackageAssets:
         - 10.2.1
         - 10.2.2
         - 10.3.1
+        - 10.3.2
         - 10.4.0
         compatible:
         - 10.4.0
@@ -2993,12 +3133,12 @@ m_PackageAssets:
       entitlements:
         isAllowed: 1
       isAssetStorePackage: 0
-      datePublishedTicks: 0
+      datePublishedTicks: 637511006970000000
       documentationUrl: 
       hasRepository: 1
       repository:
         type: git
-        url: https://github.com/Unity-Technologies/Graphics.git
+        url: git+https://github.com/Unity-Technologies/Graphics.git
         revision: e11ddbccf86bcd7ceaae2c0b8646420d2e53cf80
         path: 
     - packageId: com.unity.shadergraph@10.4.0
@@ -3006,7 +3146,7 @@ m_PackageAssets:
       isDirectDependency: 0
       version: 10.4.0
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.shadergraph@10.4.0
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.shadergraph@10.4.0
       assetPath: Packages/com.unity.shadergraph
       name: com.unity.shadergraph
       displayName: Shader Graph
@@ -3151,12 +3291,60 @@ m_PackageAssets:
         url: git+https://github.com/Unity-Technologies/Graphics.git
         revision: e11ddbccf86bcd7ceaae2c0b8646420d2e53cf80
         path: 
+    - packageId: com.unity.settings-manager@1.0.3
+      testable: 0
+      isDirectDependency: 0
+      version: 1.0.3
+      source: 1
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.settings-manager@1.0.3
+      assetPath: Packages/com.unity.settings-manager
+      name: com.unity.settings-manager
+      displayName: Settings Manager
+      author:
+        name: 
+        email: 
+        url: 
+      category: 
+      type: 
+      description: A framework for making any serializable field a setting, complete
+        with a pre-built settings interface.
+      status: 4
+      errors: []
+      versions:
+        all:
+        - 1.0.3
+        compatible:
+        - 1.0.3
+        verified: 1.0.3
+      dependencies: []
+      resolvedDependencies: []
+      keywords: []
+      registry:
+        id: main
+        name: 
+        url: https://packages.unity.com
+        scopes: []
+        isDefault: 1
+        capabilities: 7
+      hasRegistry: 1
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 0
+      documentationUrl: 
+      hasRepository: 1
+      repository:
+        type: git
+        url: https://github.com/Unity-Technologies/com.unity.settings-manager.git
+        revision: 473664ccba1496294b741cf169740a5d54b3d0b6
+        path: 
     - packageId: com.unity.nuget.mono-cecil@1.10.1-preview.1
       testable: 0
       isDirectDependency: 0
       version: 1.10.1-preview.1
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.nuget.mono-cecil@1.10.1-preview.1
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.nuget.mono-cecil@1.10.1-preview.1
       assetPath: Packages/com.unity.nuget.mono-cecil
       name: com.unity.nuget.mono-cecil
       displayName: Mono Cecil
@@ -3219,7 +3407,7 @@ m_PackageAssets:
       isDirectDependency: 0
       version: 4.3.1
       source: 1
-      resolvedPath: C:\Users\quent\Unity\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.searcher@4.3.1
+      resolvedPath: F:\Projet-Git Perso\GameWeek\GameWeek2021\GameWeek 2021\Library\PackageCache\com.unity.searcher@4.3.1
       assetPath: Packages/com.unity.searcher
       name: com.unity.searcher
       displayName: Searcher
@@ -3292,5 +3480,5 @@ m_PackageAssets:
         path: 
   m_LocalPackages:
     m_LocalFileStatus: []
-m_ProjectPath: C:/Users/quent/Unity/GameWeek/GameWeek2021/GameWeek 2021/Packages
+m_ProjectPath: F:/Projet-Git Perso/GameWeek/GameWeek2021/GameWeek 2021/Packages
 m_EditorVersion: 2020.3.3f1 (76626098c1c4)
