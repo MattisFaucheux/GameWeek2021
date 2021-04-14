@@ -141,7 +141,7 @@ namespace HelloWorld
 
         NetworkVariableInt Health = new NetworkVariableInt(new NetworkVariableSettings
         {
-            WritePermission = NetworkVariablePermission.Everyone,
+            WritePermission = NetworkVariablePermission.OwnerOnly,
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
@@ -151,7 +151,25 @@ namespace HelloWorld
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
-        NetworkVariableString Killer = new NetworkVariableString(new NetworkVariableSettings
+        NetworkVariableInt ReceiveDamage = new NetworkVariableInt(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableString HitFrom = new NetworkVariableString(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableString LastDeath = new NetworkVariableString(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableString LastInfo = new NetworkVariableString(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
             ReadPermission = NetworkVariablePermission.Everyone
@@ -167,7 +185,9 @@ namespace HelloWorld
             Name.OnValueChanged += OnNameChanged;
             Health.OnValueChanged += OnHealthChanged;
             Stamina.OnValueChanged += OnStaminaChanged;
-            Killer.OnValueChanged += OnKillerChanged;
+            ReceiveDamage.OnValueChanged += OnReceiveDamageChanged;
+            LastDeath.OnValueChanged += OnLastDeathChanged;
+            LastInfo.OnValueChanged += OnLastInfoChanged;
 
             if (NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject == GetComponent<NetworkObject>())
             {
@@ -209,7 +229,10 @@ namespace HelloWorld
 
         private void OnHealthChanged(int previousvalue, int newvalue)
         {
-            healthBar.SetValue(newvalue);
+            if (Health.Value <= 0) LastDeath.Value = HitFrom.Value;
+            else healthBar.SetValue(newvalue);
+
+            if(isControlled) ReceiveDamage.Value = 0;
         }
 
         private void OnStaminaChanged(int previousvalue, int newvalue)
@@ -217,9 +240,48 @@ namespace HelloWorld
             staminaBar.SetValue(newvalue);
         }
 
-        private void OnKillerChanged(string previousvalue, string newvalue)
+        private void OnReceiveDamageChanged(int previousvalue, int newvalue)
         {
-            if(isControlled && newvalue != "ResetKiller") Die(newvalue);
+            canRegenStamina = false;
+            canRegenHealth = false;
+
+            if (!isControlled || isBlocking) return;
+
+            Health.Value = Mathf.Max(Health.Value - newvalue, 0);
+        }
+
+        private void OnLastDeathChanged(string previousvalue, string newvalue)
+        {
+            if (newvalue == "ResetLastDeath") return;
+            //foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Player"))
+            //{
+            //    obj.GetComponent<TemporaryPlayer>().LastInfo.Value = Name.Value + " has been killed by " + newvalue;
+            //}
+            if (isControlled)
+            {
+                SendInfoServerRpc(Name.Value + " has been killed by " + newvalue);
+                Die();
+            }
+            LastDeath.Value = "ResetLastDeath";
+        }
+
+        [ClientRpc]
+        private void SendInfoClientRpc(string info)
+        {
+            if (InfoFeed.instance) InfoFeed.instance.DisplayInfo(info);
+        }
+
+        [ServerRpc]
+        private void SendInfoServerRpc(string info)
+        {
+            SendInfoClientRpc(info);
+        }
+
+        private void OnLastInfoChanged(string previousvalue, string newvalue)
+        {
+            if (newvalue == "ResetLastInfo") return;
+            if (InfoFeed.instance) InfoFeed.instance.DisplayInfo(newvalue);
+            LastInfo.Value = "ResetLastInfo";
         }
 
         private void NetworkSceneManagerOnSceneSwitched()
@@ -350,7 +412,6 @@ namespace HelloWorld
                 return;
             }
 
-
             if (Input.GetMouseButtonDown(1))
             {
                 Debug.Log("Start Shield");
@@ -372,17 +433,16 @@ namespace HelloWorld
                 Debug.Log("Keep Shield");
                 isUsingSkill = true;
 
-                if (Stamina.Value < blockStaminaUsedPerSec)
-                {
-                    isBlocking = false;
-                    return;
-                }
-
                 blockTimer += Time.deltaTime;
-                if (blockTimer > 1)
+                if (blockTimer > 1) 
                 {
-                    UseStamina(blockStaminaUsedPerSec);
                     blockTimer = 0;
+
+                    if (!UseStamina(blockStaminaUsedPerSec))
+                    {
+                        isBlocking = false;
+                        return;
+                    }
                 }
 
                 canRegenStamina = false;
@@ -434,25 +494,17 @@ namespace HelloWorld
 
         void CheckVoidDeath()
         {
-            if (transform.position.y <= yMinLimit) Die("the void");
+            if (transform.position.y <= yMinLimit) LastDeath.Value = "the void";
         }
 
         void TakeDamage(int damage, string from)
         {
-            canRegenStamina = false;
-            canRegenHealth = false;
-
-            if (isBlocking) return;
-
-            Health.Value = Mathf.Max(Health.Value - damage, 0);
-
-            if (Health.Value <= 0) Killer.Value = from;
+            HitFrom.Value = from;
+            ReceiveDamage.Value = damage;
         }
 
-        void Die(string killer)
+        void Die()
         {
-            if(InfoFeed.instance) InfoFeed.instance.DisplayInfo(Name.Value + " has been killed by " + killer);
-            Killer.Value = "ResetKiller";
             Respawn();
         }
 
