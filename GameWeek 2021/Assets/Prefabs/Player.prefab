@@ -860,11 +860,26 @@ MonoBehaviour:
   nbrKillLvlUp: 2
   healthBar: {fileID: 6547375707207029702}
   staminaBar: {fileID: 6547375707577246103}
+  staminaRegenPerSec: 5
+  healthRegenPerSec: 5
+  timeBeforeStartHealthRegen: 10
   attackPoint: {fileID: 1593309122}
   attackRange: 0.8
+  attackReload: 0.5
+  attackChargedLoadTime: 1.5
+  attackChargedDamageMultiplier: 1.5
+  attackLoadingSpeedMultiplier: 0.5
+  attackBasicStaminaUsed: 10
+  attackChargedStaminaUsed: 10
+  knockbackApplyChargedAttack: 150
+  knockbackApplyBasicAttack: 75
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
+  blockStaminaUsedPerSec: 3
+  blockingSpeedMultiplier: 0.5
+  blockChargedAttackStaminaUsed: 20
+  yMinLimit: -40
 --- !u!54 &6547375707730220227
 Rigidbody:
   m_ObjectHideFlags: 0
