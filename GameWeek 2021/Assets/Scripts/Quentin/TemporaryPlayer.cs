@@ -559,7 +559,7 @@ namespace HelloWorld
 
         void Respawn()
         {
-            transform.position = isLobby ? new Vector3(Random.Range(-15f, 15f), 1f, Random.Range(-15f, 15f)) : spawnPoints[Random.Range(0, spawnPoints.Count)];
+            transform.position = isLobby ? new Vector3(Random.Range(-15f, 15f), 2f, Random.Range(-15f, 15f)) : spawnPoints[Random.Range(0, spawnPoints.Count)];
 
             Health.Value = maxHealth;
             Stamina.Value = maxStamina;
