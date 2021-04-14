@@ -95,6 +95,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     int attackChargedStaminaUsed = 10;
 
+    [SerializeField]
+    float knockbackApplyChargedAttack = 300;
+
+    [SerializeField]
+    float knockbackApplyBasicAttack = 150;
+
     public LayerMask enemyLayers;
     #endregion
 
@@ -110,6 +116,10 @@ public class PlayerController : MonoBehaviour
     float blockTimer;
 
     bool isBlocking = false;
+
+    [SerializeField]
+    int blockChargedAttackStaminaUsed = 20;
+    int blockBasicAttackStaminaUsed = 10;
 
     #endregion
 
@@ -196,7 +206,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            TakeDamage(10);
+            TakeDamage(10, Vector3.zero);
         }
 
         CheckAttackInput();
@@ -218,7 +228,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (Time.time >= nextAttackTime && Input.GetMouseButtonDown(0) && currentStamina >= attackBasicStaminaUsed)
+        if (Time.time >= nextAttackTime && Input.GetButtonDown("Attack") && currentStamina >= attackBasicStaminaUsed)
         {
             startAttackLoadTime = Time.time;
             isAttackLoading = true;
@@ -230,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Start Load Attack");
         }
-        else if (isAttackLoading && Input.GetMouseButtonUp(0))
+        else if (isAttackLoading && Input.GetButtonUp("Attack"))
         {
             if (Time.time - startAttackLoadTime > attackChargedLoadTime && currentStamina >= attackChargedStaminaUsed)
             {
@@ -281,7 +291,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetButtonDown("Block"))
         {
             Debug.Log("Start Shield");
 
@@ -290,7 +300,7 @@ public class PlayerController : MonoBehaviour
             canRegenStamina = false;
             canRegenHealth = false;
         }
-        else if (isBlocking && Input.GetMouseButtonUp(1))
+        else if (isBlocking && Input.GetButtonUp("Block"))
         {
             Debug.Log("Release Shield");
 
@@ -385,13 +395,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void TakeDamage(int damage)
+    void TakeDamage(int damage, Vector3 knockback, bool attackCharged = false)
     {
         canRegenStamina = false;
         canRegenHealth = false;
 
+        if (rb)
+        {
+            rb.AddForce(knockback);
+        }
+
         if(isBlocking)
         {
+            if(attackCharged)
+            {
+                UseStamina(blockChargedAttackStaminaUsed);
+            }
+            else
+            {
+                UseStamina(blockBasicAttackStaminaUsed);
+            }
+
             return;
         }
 
@@ -448,14 +472,18 @@ public class PlayerController : MonoBehaviour
         {
             if (enemy.gameObject != gameObject)
             {
+                Vector3 knockback = enemy.transform.position - transform.position;
+                knockback.y = 0;
+                knockback.Normalize();
+
                 if (attackCharged)
                 {
-                    enemy.GetComponent<PlayerController>().TakeDamage((int)(strength * attackChargedDamageMultiplier));
+                    enemy.GetComponent<PlayerController>().TakeDamage((int)(strength * attackChargedDamageMultiplier), knockback * knockbackApplyChargedAttack, attackCharged);
                     Debug.Log("Patate de forain!!!!!");
                 }
                 else
                 {
-                    enemy.GetComponent<PlayerController>().TakeDamage(strength);
+                    enemy.GetComponent<PlayerController>().TakeDamage(strength, knockback * knockbackApplyBasicAttack, attackCharged);
                 }
             }
         }

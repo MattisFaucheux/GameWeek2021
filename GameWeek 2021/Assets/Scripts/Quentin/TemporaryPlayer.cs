@@ -1,10 +1,9 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
-using MLAPI.Prototyping;
 using MLAPI.SceneManagement;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace HelloWorld
@@ -93,6 +92,12 @@ namespace HelloWorld
         int attackChargedStaminaUsed = 10;
 
         [SerializeField]
+        float knockbackApplyChargedAttack = 300;
+
+        [SerializeField]
+        float knockbackApplyBasicAttack = 150;
+
+        [SerializeField]
         LayerMask enemyLayers;
         #endregion
 
@@ -108,6 +113,10 @@ namespace HelloWorld
         float blockTimer;
 
         bool isBlocking = false;
+
+        [SerializeField]
+        int blockChargedAttackStaminaUsed = 20;
+        int blockBasicAttackStaminaUsed = 10;
         #endregion
 
         #region Other
@@ -127,8 +136,6 @@ namespace HelloWorld
         Camera cam;
         Vector3 camOffset;
         Transform noRot;
-
-        bool killerOpen = true;
         #endregion
 
         #region Network
@@ -158,6 +165,18 @@ namespace HelloWorld
         });
 
         NetworkVariableString HitFrom = new NetworkVariableString(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableVector3 Knockback = new NetworkVariableVector3(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableBool IsAttackCharged = new NetworkVariableBool(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
             ReadPermission = NetworkVariablePermission.Everyone
@@ -211,7 +230,6 @@ namespace HelloWorld
 
             cam = Camera.main;
             camOffset = cam.transform.position;
-            transform.position = new Vector3(Random.Range(-15f, 15f), 1f, Random.Range(-15f, 15f));
 
             forward = cam.transform.forward;
             forward.y = 0;
@@ -220,6 +238,8 @@ namespace HelloWorld
 
             rb = GetComponent<Rigidbody>();
             attackPoint = transform.GetChild(3);
+
+            Respawn();
         }
 
         private void OnNameChanged(string previousvalue, string newvalue)
@@ -245,24 +265,35 @@ namespace HelloWorld
             canRegenStamina = false;
             canRegenHealth = false;
 
-            if (!isControlled || isBlocking) return;
+            if (!isControlled || newvalue == 0) return;
+
+            if (isBlocking)
+            {
+                if (rb) rb.AddForce(Knockback.Value);
+                Stamina.Value = Mathf.Max(Stamina.Value - (IsAttackCharged.Value ? blockChargedAttackStaminaUsed : blockBasicAttackStaminaUsed), 0);
+                return;
+            }
 
             Health.Value = Mathf.Max(Health.Value - newvalue, 0);
+            if(Health.Value > 0) if (rb) rb.AddForce(Knockback.Value);
         }
 
         private void OnLastDeathChanged(string previousvalue, string newvalue)
         {
             if (newvalue == "ResetLastDeath") return;
-            //foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Player"))
-            //{
-            //    obj.GetComponent<TemporaryPlayer>().LastInfo.Value = Name.Value + " has been killed by " + newvalue;
-            //}
             if (isControlled)
             {
                 SendInfoServerRpc(Name.Value + " has been killed by " + newvalue);
                 Die();
             }
             LastDeath.Value = "ResetLastDeath";
+        }
+
+        private void OnLastInfoChanged(string previousvalue, string newvalue)
+        {
+            if (newvalue == "ResetLastInfo") return;
+            if (InfoFeed.instance) InfoFeed.instance.DisplayInfo(newvalue);
+            LastInfo.Value = "ResetLastInfo";
         }
 
         [ClientRpc]
@@ -277,17 +308,11 @@ namespace HelloWorld
             SendInfoClientRpc(info);
         }
 
-        private void OnLastInfoChanged(string previousvalue, string newvalue)
-        {
-            if (newvalue == "ResetLastInfo") return;
-            if (InfoFeed.instance) InfoFeed.instance.DisplayInfo(newvalue);
-            LastInfo.Value = "ResetLastInfo";
-        }
-
         private void NetworkSceneManagerOnSceneSwitched()
         {
             cam = Camera.main;
             camOffset = cam.transform.position;
+            Respawn();
         }
 
         void FixedUpdate()
@@ -335,11 +360,9 @@ namespace HelloWorld
             canRegenHealth = true;
         }
 
-
         void CheckInputs()
         {
             if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0) ComputeMove();
-            if (Input.GetKeyDown(KeyCode.R)) TakeDamage(10, Name.Value);
 
             CheckAttackInput();
             CheckBlockInput();
@@ -359,7 +382,7 @@ namespace HelloWorld
                 return;
             }
 
-            if (Time.time >= nextAttackTime && Input.GetMouseButtonDown(0) && Stamina.Value >= attackBasicStaminaUsed)
+            if (Time.time >= nextAttackTime && Input.GetButtonDown("Attack") && Stamina.Value >= attackBasicStaminaUsed)
             {
                 startAttackLoadTime = Time.time;
                 isAttackLoading = true;
@@ -371,9 +394,9 @@ namespace HelloWorld
 
                 Debug.Log("Start Load Attack");
             }
-            else if (isAttackLoading && Input.GetMouseButtonUp(0))
+            else if (isAttackLoading && Input.GetButtonUp("Attack"))
             {
-                if (Time.time - startAttackLoadTime > attackChargedLoadTime && UseStamina(attackBasicStaminaUsed))
+                if (Time.time - startAttackLoadTime > attackChargedLoadTime && UseStamina(attackChargedStaminaUsed))
                 {
                     Attack(true);
                     Debug.Log("Release Charged Attack");
@@ -412,7 +435,7 @@ namespace HelloWorld
                 return;
             }
 
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetButtonDown("Block"))
             {
                 Debug.Log("Start Shield");
 
@@ -421,7 +444,7 @@ namespace HelloWorld
                 canRegenStamina = false;
                 canRegenHealth = false;
             }
-            else if (isBlocking && Input.GetMouseButtonUp(1))
+            else if (isBlocking && Input.GetButtonUp("Block"))
             {
                 Debug.Log("Release Shield");
 
@@ -497,9 +520,11 @@ namespace HelloWorld
             if (transform.position.y <= yMinLimit) LastDeath.Value = "the void";
         }
 
-        void TakeDamage(int damage, string from)
+        void TakeDamage(int damage, Vector3 knockback, bool attackCharged, string from)
         {
             HitFrom.Value = from;
+            Knockback.Value = knockback;
+            IsAttackCharged.Value = attackCharged;
             ReceiveDamage.Value = damage;
         }
 
@@ -510,7 +535,14 @@ namespace HelloWorld
 
         void Respawn()
         {
-            transform.position = new Vector3(Random.Range(-15f, 15f), 1f, Random.Range(-15f, 15f));
+            if (SceneManager.GetActiveScene().name == "LobbyScene")
+            {
+                transform.position = new Vector3(Random.Range(-15f, 15f), 10f, Random.Range(-15f, 15f));
+            }
+            else if (SceneManager.GetActiveScene().name == "GameScene")
+            {
+                transform.position = new Vector3(Random.Range(-60f, 60f), 10f, Random.Range(-30f, 50f));
+            }
 
             Health.Value = maxHealth;
             Stamina.Value = maxStamina;
@@ -540,12 +572,16 @@ namespace HelloWorld
             {
                 if (enemy.gameObject != gameObject)
                 {
+                    Vector3 knockback = enemy.transform.position - transform.position;
+                    knockback.y = 0;
+                    knockback.Normalize();
+
                     if (attackCharged)
                     {
-                        enemy.GetComponent<TemporaryPlayer>().TakeDamage((int)(strength * attackChargedDamageMultiplier), Name.Value);
+                        enemy.GetComponent<TemporaryPlayer>().TakeDamage((int)(strength * attackChargedDamageMultiplier), knockback * knockbackApplyChargedAttack, true, Name.Value);
                         Debug.Log("Patate de forain!!!!!");
                     }
-                    else enemy.GetComponent<TemporaryPlayer>().TakeDamage(strength, Name.Value);
+                    else enemy.GetComponent<TemporaryPlayer>().TakeDamage(strength, knockback * knockbackApplyBasicAttack, false, Name.Value);
                 }
             }
         }

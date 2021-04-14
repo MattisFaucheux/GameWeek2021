@@ -367,7 +367,7 @@ MonoBehaviour:
   staminaRegenPerSec: 5
   healthRegenPerSec: 5
   timeBeforeStartHealthRegen: 10
-  attackRange: 0.8
+  attackRange: 1
   attackReload: 0.5
   attackChargedLoadTime: 1
   attackChargedDamageMultiplier: 1.5
