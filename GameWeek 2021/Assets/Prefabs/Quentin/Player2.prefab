@@ -192,7 +192,7 @@ GameObject:
   - component: {fileID: 2502013365328430464}
   m_Layer: 6
   m_Name: Player2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -367,7 +367,6 @@ MonoBehaviour:
   staminaRegenPerSec: 5
   healthRegenPerSec: 5
   timeBeforeStartHealthRegen: 10
-  attackPoint: {fileID: 2702384649566417489}
   attackRange: 0.8
   attackReload: 0.5
   attackChargedLoadTime: 1
