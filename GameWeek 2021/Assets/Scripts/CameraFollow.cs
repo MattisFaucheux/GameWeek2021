@@ -11,12 +11,18 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        distance = transform.position - target.transform.position;
+        if (target) distance = transform.position - target.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = target.transform.position + distance;
+        if(target) transform.position = target.transform.position + distance;
+    }
+
+    public void SetTarget(GameObject obj)
+    {
+        target = obj;
+        distance = transform.position - target.transform.position;
     }
 }
