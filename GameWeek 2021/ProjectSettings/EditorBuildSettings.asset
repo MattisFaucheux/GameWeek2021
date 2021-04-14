@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScene/Quentin/GameScene.unity
     guid: 172dffed9d9a118469f5e35c4da58a9f
-  - enabled: 1
-    path: Assets/Scenes/TestScene/Quentin/PostGameScene.unity
-    guid: b801d1bd3339733489c75c63f64ce2bf
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}
