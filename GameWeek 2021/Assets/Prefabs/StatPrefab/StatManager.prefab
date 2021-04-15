@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5996762131367048852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7254939186698223439}
+  - component: {fileID: 1703411503836544714}
+  m_Layer: 0
+  m_Name: StatManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7254939186698223439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5996762131367048852}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1703411503836544714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5996762131367048852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d37caab515043f14fab9a5a635d74e52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gdStat:
+  - {fileID: 7244744390313477968, guid: 9266419a49dfc93458ddcacd26aeb6b2, type: 3}
+  - {fileID: 5121007890890197876, guid: a88a9c277657d5b4c97820449197bda5, type: 3}
+  - {fileID: 8817773693706566331, guid: a9765169ac88a254d9c7f76f980aa75e, type: 3}
+  gdProf:
+  - {fileID: 7508928722144086955, guid: 0fd9092e00ee09140846f2a07554ff07, type: 3}
+  - {fileID: 6030797218152308489, guid: 44744a18e68312b45a97f57b40e25c61, type: 3}
+  - {fileID: 7853017548072423398, guid: bd84ee227a828314db354871a8249b98, type: 3}
+  gpStat:
+  - {fileID: 4956729908794490124, guid: fb14326c0c627274a83ae92914577d75, type: 3}
+  - {fileID: 5296906626273191378, guid: 9abb0da65b596ce4eb2168ae691ecd1a, type: 3}
+  gpProf:
+  - {fileID: 6931528228787824577, guid: 1ca41ba29c9f8a847a250278a2c71409, type: 3}
+  - {fileID: 6276478770201438894, guid: ab4660557a603634e878e18ca49afcd7, type: 3}
+  - {fileID: 6497520730948419584, guid: c64cc4155e165464987263977707cf7d, type: 3}
+  artStat:
+  - {fileID: 7543653740946220161, guid: 8b0ad744c08868d4ab28e99b55e9f7e3, type: 3}
+  - {fileID: 9007380382680447868, guid: 69f9431dd35d2d84987757e3c71500a4, type: 3}
+  - {fileID: 6463243695814506124, guid: 9b2e25b69f013b64c9c09dccf2ec0986, type: 3}
+  - {fileID: 4897107594615569330, guid: 8dfa00d8404c9fc47aa1062b7acea38f, type: 3}
+  artProf:
+  - {fileID: 8653434381856787888, guid: 7b0ea3899e89b6c4c86c924001f4f5f8, type: 3}
+  - {fileID: 1830635194640671133, guid: 84e08ae91f728df43b159bc3e2980559, type: 3}
+  - {fileID: 2890110133146816858, guid: d0dddda635abd7f488d27987b09c09c3, type: 3}
+  directeur: {fileID: 4572919718194099852, guid: 584836dcbfab1e2428a469aadc416204, type: 3}
