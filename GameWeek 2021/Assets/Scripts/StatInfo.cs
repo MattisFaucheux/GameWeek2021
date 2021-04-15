@@ -11,5 +11,6 @@ public class StatInfo : MonoBehaviour
     public enPlayerClass playerClass;
     public int currentLvl;
     public int nbrKillLvlUp;
+    public string taunt;
     public Mesh mesh;
 }

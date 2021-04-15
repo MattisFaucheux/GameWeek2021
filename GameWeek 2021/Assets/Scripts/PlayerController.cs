@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            TakeDamage(10, Vector3.zero);
+            LevelUp();
         }
 
         CheckAttackInput();
@@ -451,7 +451,8 @@ public class PlayerController : MonoBehaviour
         currentStamina -= staminaUsed;
         currentStamina = Mathf.Max(currentStamina, 0);
 
-        staminaBar.SetValue(currentStamina);
+        
+
     }
 
     void ComputeMove()
@@ -494,6 +495,39 @@ public class PlayerController : MonoBehaviour
         if (attackPoint)
         {
             Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        }
+    }
+
+    void LevelUp()
+    {
+        if (currentLvl == 6)
+        {
+            //YOU WIN
+        }
+        else
+        {
+            StatInfoManager statManager = FindObjectOfType<StatInfoManager>();
+            if (statManager)
+            {
+                StatInfo newStat = statManager.GetStatInfo(playerClass, currentLvl);
+                if (newStat)
+                {
+                    strength = newStat.strength;
+                    moveSpeed = newStat.moveSpeed;
+                    maxStamina = newStat.maxStamina;
+                    staminaBar.OnlySetMaxValue(maxStamina);
+
+                    maxHealth = newStat.maxHealth;
+                    healthBar.OnlySetMaxValue(maxHealth);
+
+                    currentLvl = newStat.currentLvl;
+                    nbrKillLvlUp = newStat.nbrKillLvlUp;
+
+                    //taunt = newStat.taunt
+                    //mesh = newStat.mesh
+
+                }
+            }
         }
     }
 }

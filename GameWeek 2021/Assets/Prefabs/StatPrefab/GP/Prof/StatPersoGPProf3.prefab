@@ -43,11 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 009bf6e840535cc4f8528da9e6522f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strength: 0
-  moveSpeed: 0
-  maxStamina: 0
-  maxHealth: 0
+  strength: 45
+  moveSpeed: 10
+  maxStamina: 165
+  maxHealth: 250
   playerClass: 1
   currentLvl: 5
-  nbrKillLvlUp: 0
+  nbrKillLvlUp: 2
+  taunt: "Moi \xE7a ma fait rire"
   mesh: {fileID: 0}

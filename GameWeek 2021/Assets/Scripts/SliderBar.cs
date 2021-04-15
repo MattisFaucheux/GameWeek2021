@@ -23,4 +23,10 @@ public class SliderBar : MonoBehaviour
 
         fill.color = gradient.Evaluate(slider.normalizedValue);
     }
+
+    public void OnlySetMaxValue(int maxValue)
+    {
+        slider.maxValue = maxValue;
+        fill.color = gradient.Evaluate(slider.normalizedValue);
+    }
 }
