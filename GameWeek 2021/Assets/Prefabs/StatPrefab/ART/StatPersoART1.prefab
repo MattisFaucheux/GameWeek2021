@@ -43,10 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 009bf6e840535cc4f8528da9e6522f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strength: 30
+  strength: 10
   moveSpeed: 10
   maxStamina: 100
-  maxHealth: 80
+  maxHealth: 100
   playerClass: 2
   currentLvl: 1
   nbrKillLvlUp: 1
