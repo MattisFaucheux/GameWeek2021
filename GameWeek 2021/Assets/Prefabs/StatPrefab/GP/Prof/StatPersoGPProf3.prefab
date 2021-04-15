@@ -46,7 +46,7 @@ MonoBehaviour:
   strength: 45
   moveSpeed: 10
   maxStamina: 165
-  maxHealth: 250
+  maxHealth: 210
   playerClass: 1
   currentLvl: 5
   nbrKillLvlUp: 2

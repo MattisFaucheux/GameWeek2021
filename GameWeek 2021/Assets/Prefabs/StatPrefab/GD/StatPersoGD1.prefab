@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   strength: 10
-  moveSpeed: 15
+  moveSpeed: 10
   maxStamina: 100
   maxHealth: 100
   playerClass: 0
