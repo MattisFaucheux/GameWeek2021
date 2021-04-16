@@ -6,7 +6,7 @@ public static class PlayerData
 
     private static string _connectAddress = "127.0.0.1";
 
-    private static string _name = "Player";
+    private static string _name = "Name";
     
     private static enPlayerClass _class = enPlayerClass.GD;
 

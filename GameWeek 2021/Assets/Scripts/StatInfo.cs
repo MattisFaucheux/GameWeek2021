@@ -12,5 +12,5 @@ public class StatInfo : MonoBehaviour
     public int currentLvl;
     public int nbrKillLvlUp;
     public string taunt;
-    public Mesh mesh;
+    public GameObject model;
 }

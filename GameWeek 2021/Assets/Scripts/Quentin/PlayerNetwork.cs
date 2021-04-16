@@ -248,6 +248,8 @@ namespace HelloWorld
         });
         #endregion
 
+        public Animator anim;
+
         public override void NetworkStart()
         {
             noRot = transform.GetChild(0);
@@ -507,6 +509,15 @@ namespace HelloWorld
                 Stamina.Value = MaxStamina.Value;
             }
 
+            if(IsBlocking.Value && !anim.GetBool("shield"))
+            {
+                anim.SetBool("shield", true);
+            }
+            else if(!IsBlocking.Value && anim.GetBool("shield"))
+            {
+                anim.SetBool("shield", false);
+            }
+
             lastHeading = Vector3.zero;
             lastMovement = Vector3.zero;
 
@@ -526,7 +537,10 @@ namespace HelloWorld
 
         void CheckInputs()
         {
-            if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0) ComputeMove();
+            if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0)
+            {
+                ComputeMove();
+            }
 
             CheckAttackInput();
             CheckBlockInput();
@@ -738,6 +752,8 @@ namespace HelloWorld
 
         void Attack(bool attackCharged = false)
         {
+            anim.SetTrigger("Attack");
+
             Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
 
             foreach (Collider enemy in hitEnemies)
