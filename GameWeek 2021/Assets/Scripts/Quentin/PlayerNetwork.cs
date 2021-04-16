@@ -494,12 +494,6 @@ namespace HelloWorld
             }
         }
 
-        [ServerRpc]
-        void EndServerRpc()
-        {
-            NetworkSceneManager.SwitchScene("LobbyScene");
-        }
-
         void Update()
         {
             noRot.SetPositionAndRotation(transform.position, Quaternion.identity);
