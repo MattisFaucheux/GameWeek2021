@@ -121,6 +121,8 @@ namespace HelloWorld
 
         [SerializeField]
         int blockChargedAttackStaminaUsed = 20;
+
+        [SerializeField]
         int blockBasicAttackStaminaUsed = 10;
         #endregion
 
@@ -269,6 +271,8 @@ namespace HelloWorld
             forward.y = 0;
             forward = Vector3.Normalize(forward);
             right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
+
+            playerClass = PlayerData.Class;
 
             rb = GetComponent<Rigidbody>();
             attackPoint = transform.GetChild(3);

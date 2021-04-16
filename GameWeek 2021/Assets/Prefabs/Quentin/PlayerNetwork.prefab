@@ -361,26 +361,29 @@ MonoBehaviour:
   moveSpeed: 10
   maxStamina: 100
   maxHealth: 100
-  playerClass: 0
+  playerClass: 2
   currentLvl: 1
-  staminaRegenPerSec: 5
-  healthRegenPerSec: 5
+  nbrKillLvlUp: 0
+  killComplete: 0
+  staminaRegenPerSec: 4
+  healthRegenPerSec: 4
   timeBeforeStartHealthRegen: 10
   attackRange: 1
   attackReload: 0.5
   attackChargedLoadTime: 1
-  attackChargedDamageMultiplier: 1.5
+  attackChargedDamageMultiplier: 2.5
   attackLoadingSpeedMultiplier: 0.5
-  attackBasicStaminaUsed: 10
+  attackBasicStaminaUsed: 5
   attackChargedStaminaUsed: 10
-  knockbackApplyChargedAttack: 240
-  knockbackApplyBasicAttack: 120
+  knockbackApplyChargedAttack: 300
+  knockbackApplyBasicAttack: 150
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
-  blockStaminaUsedPerSec: 3
+  blockStaminaUsedPerSec: 5
   blockingSpeedMultiplier: 0.5
-  blockChargedAttackStaminaUsed: 20
+  blockChargedAttackStaminaUsed: 25
+  blockBasicAttackStaminaUsed: 10
   spawnPoints:
   - {x: 62, y: 2, z: 55}
   - {x: 25, y: 2, z: 20}

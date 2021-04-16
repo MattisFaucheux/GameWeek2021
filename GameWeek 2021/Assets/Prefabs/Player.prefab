@@ -855,7 +855,7 @@ MonoBehaviour:
   moveSpeed: 10
   maxStamina: 100
   maxHealth: 100
-  playerClass: 0
+  playerClass: 2
   currentLvl: 1
   nbrKillLvlUp: 2
   healthBar: {fileID: 6547375707207029702}
