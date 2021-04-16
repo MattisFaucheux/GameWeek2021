@@ -10,6 +10,9 @@ public class NewMenuManager : MonoBehaviour
     public TMPro.TMP_InputField pseudoInputField;
     public TMPro.TMP_Dropdown classDropdown;
 
+    public GameObject mainMenu;
+    public GameObject creditMenu;
+
     private void Start()
     {
         ipInputField.text = PlayerData.ConnectAddress;
@@ -19,6 +22,9 @@ public class NewMenuManager : MonoBehaviour
         pseudoInputField.onEndEdit.AddListener(SetPseudo);
 
         classDropdown.onValueChanged.AddListener(SetClass);
+
+        mainMenu.SetActive(true);
+        creditMenu.SetActive(false);
     }
 
     public void SetClass(int classId)
@@ -62,5 +68,22 @@ public class NewMenuManager : MonoBehaviour
     {
         PlayerData.IsHost = false;
         SceneManager.LoadScene("LobbyScene");
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    public void CreditMenu()
+    {
+        mainMenu.SetActive(false);
+        creditMenu.SetActive(true);
+    }
+
+    public void MainMenu()
+    {
+        mainMenu.SetActive(true);
+        creditMenu.SetActive(false);
     }
 }
