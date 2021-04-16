@@ -19,12 +19,6 @@ namespace HelloWorld
 
         [SerializeField]
         int moveSpeed = 4;
-
-        [SerializeField]
-        int maxStamina = 100;
-
-        [SerializeField]
-        int maxHealth = 100;
         #endregion
 
         #region ClassParameter
@@ -140,8 +134,6 @@ namespace HelloWorld
         [SerializeField]
         float yMinLimit = -40;
 
-        bool isControlled = false;
-
         bool isUsingSkill = false;
 
         bool isLobby = true;
@@ -206,7 +198,8 @@ namespace HelloWorld
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
-        NetworkVariableInt ChargedState = new NetworkVariableInt(new NetworkVariableSettings
+        [HideInInspector]
+        public NetworkVariableInt ChargedState = new NetworkVariableInt(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
             ReadPermission = NetworkVariablePermission.Everyone
@@ -230,13 +223,25 @@ namespace HelloWorld
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
+        NetworkVariableString LastWinner = new NetworkVariableString(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
         NetworkVariableBool AddKill = new NetworkVariableBool(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
-        NetworkVariableString LastWinner = new NetworkVariableString(new NetworkVariableSettings
+        NetworkVariableInt MaxStamina = new NetworkVariableInt(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableInt MaxHealth = new NetworkVariableInt(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
             ReadPermission = NetworkVariablePermission.Everyone
@@ -261,16 +266,18 @@ namespace HelloWorld
             LastInfo.OnValueChanged += OnLastInfoChanged;
             AddKill.OnValueChanged += OnAddKillChanged;
             ChargedState.OnValueChanged += OnChargedStateChanged;
+            MaxHealth.OnValueChanged += OnMaxHealthChanged;
+            MaxStamina.OnValueChanged += OnMaxStaminaChanged;
+
+            MaxHealth.Value = 100;
+            MaxStamina.Value = 100;
 
             if (NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject == GetComponent<NetworkObject>())
             {
                 Name.Value = PlayerData.Name;
-                Health.Value = maxHealth;
-                Stamina.Value = maxStamina;
+                Health.Value = MaxHealth.Value;
+                Stamina.Value = MaxStamina.Value;
             }
-
-            healthBar.SetMaxValue(maxHealth);
-            staminaBar.SetMaxValue(maxStamina);
 
             canv.GetChild(2).GetComponent<Text>().text = Name.Value;
             healthBar.SetValue(Health.Value);
@@ -282,7 +289,6 @@ namespace HelloWorld
 
         void Start()
         {
-            if(NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject == GetComponent<NetworkObject>()) isControlled = true;
             NetworkSceneManager.OnSceneSwitched += NetworkSceneManagerOnSceneSwitched;
 
             cam = Camera.main;
@@ -314,7 +320,7 @@ namespace HelloWorld
             if (Health.Value <= 0) LastDeath.Value = HitName.Value;
             else healthBar.SetValue(newvalue);
 
-            if(isControlled) ReceiveDamage.Value = 0;
+            if(IsOwner) ReceiveDamage.Value = 0;
         }
 
         private void OnStaminaChanged(int previousvalue, int newvalue)
@@ -327,7 +333,7 @@ namespace HelloWorld
             canRegenStamina = false;
             canRegenHealth = false;
 
-            if (!isControlled || newvalue == 0) return;
+            if (!IsOwner || newvalue == 0) return;
 
             if (IsBlocking.Value)
             {
@@ -336,7 +342,8 @@ namespace HelloWorld
                 return;
             }
 
-            SubmitDamageParticleServerRpc();
+            if (IsServer) SubmitDamageParticleClientRpc();
+            else SubmitDamageParticleServerRpc();
 
             Health.Value = Mathf.Max(Health.Value - newvalue, 0);
             if(Health.Value > 0) if (rb) rb.AddForce(Knockback.Value);
@@ -345,7 +352,7 @@ namespace HelloWorld
         private void OnLastDeathChanged(string previousvalue, string newvalue)
         {
             if (newvalue == "ResetLastDeath") return;
-            if (isControlled)
+            if (IsOwner)
             {
                 if (newvalue != "the void")
                 {
@@ -367,7 +374,7 @@ namespace HelloWorld
 
         private void OnAddKillChanged(bool previousvalue, bool newvalue)
         {
-            if (!isControlled || !newvalue) return;
+            if (!IsOwner || !newvalue) return;
 
             killComplete++;
             if (killComplete >= nbrKillLvlUp) LevelUp();
@@ -393,10 +400,32 @@ namespace HelloWorld
             }
         }
 
+        private void OnMaxHealthChanged(int previousvalue, int newvalue)
+        {
+            healthBar.OnlySetMaxValue(newvalue);
+        }
+
+        private void OnMaxStaminaChanged(int previousvalue, int newvalue)
+        {
+            staminaBar.OnlySetMaxValue(newvalue);
+        }
+
+        [ClientRpc]
+        private void SendWinClientRpc(string info)
+        {
+            InfoFeed.instance.DisplayInfo(info);
+        }
+
+        [ServerRpc]
+        private void SendWinServerRpc(string info)
+        {
+            SendWinClientRpc(info);
+        }
+
         [ClientRpc]
         private void SendInfoClientRpc(string info)
         {
-            if (InfoFeed.instance) InfoFeed.instance.DisplayInfo(info);
+            LastInfo.Value = info;
         }
 
         [ServerRpc]
@@ -426,12 +455,12 @@ namespace HelloWorld
 
             isLobby = !GameObject.Find("ISART");
 
-            if (!healthBar) healthBar = canv.GetChild(0).GetComponent<SliderBar>();
-            if (!staminaBar) staminaBar = canv.GetChild(1).GetComponent<SliderBar>();
+            if (!this) return;
 
-            if (isLobby && NetworkManager.Singleton.IsHost && LastWinner.Value != "")
+            if (isLobby && LastWinner.Value != "" && IsOwner)
             {
-                SendInfoServerRpc(LastWinner.Value + " has won the game!");
+                if (IsServer) SendWinClientRpc(LastWinner.Value + " has won the game!");
+                else SendWinServerRpc(LastWinner.Value + " has won the game!");
                 LastWinner.Value = "";
             }
 
@@ -443,7 +472,7 @@ namespace HelloWorld
 
         void FixedUpdate()
         {
-            if (!isControlled) return;
+            if (!IsOwner) return;
 
             if (lastHeading != Vector3.zero) transform.forward = lastHeading;
 
@@ -464,17 +493,23 @@ namespace HelloWorld
             }
         }
 
+        [ServerRpc]
+        void EndServerRpc()
+        {
+            NetworkSceneManager.SwitchScene("LobbyScene");
+        }
+
         void Update()
         {
             noRot.SetPositionAndRotation(transform.position, Quaternion.identity);
             shield.SetActive(IsBlocking.Value);
 
-            if (!isControlled) return;
+            if (!IsOwner) return;
 
             if (isLobby)
             {
-                Health.Value = maxHealth;
-                Stamina.Value = maxStamina;
+                Health.Value = MaxHealth.Value;
+                Stamina.Value = MaxStamina.Value;
             }
 
             lastHeading = Vector3.zero;
@@ -504,6 +539,8 @@ namespace HelloWorld
 
         void CheckAttackInput()
         {
+            if(!Input.GetButtonUp("Attack") && !Input.GetButton("Attack")) ChargedState.Value = 0;
+
             if (isUsingSkill == true)
             {
                 if (isAttackLoading)
@@ -621,7 +658,7 @@ namespace HelloWorld
                 if (staminaRegenTimer > 1)
                 {
                     Stamina.Value += staminaRegenPerSec;
-                    if (Stamina.Value >= maxStamina) Stamina.Value = maxStamina;
+                    if (Stamina.Value >= MaxStamina.Value) Stamina.Value = MaxStamina.Value;
 
                     staminaRegenTimer = 0;
                 }
@@ -641,7 +678,7 @@ namespace HelloWorld
                     if (healthRegenTimer > 1)
                     {
                         Health.Value += healthRegenPerSec;
-                        if (Health.Value >= maxHealth) Health.Value = maxHealth;
+                        if (Health.Value >= MaxHealth.Value) Health.Value = MaxHealth.Value;
 
                         healthRegenTimer = 0;
                     }
@@ -680,12 +717,12 @@ namespace HelloWorld
             healthBar.gameObject.SetActive(!isLobby);
             staminaBar.gameObject.SetActive(!isLobby);
 
-            if (!isControlled) return;
+            if (!IsOwner) return;
 
             transform.position = isLobby ? new Vector3(Random.Range(-3f, 3f), 2f, Random.Range(-3f, 3f)) : spawnPoints[Random.Range(0, spawnPoints.Count)];
 
-            Health.Value = maxHealth;
-            Stamina.Value = maxStamina;
+            Health.Value = MaxHealth.Value;
+            Stamina.Value = MaxStamina.Value;
         }
 
         bool UseStamina(int staminaUsed)
@@ -735,8 +772,9 @@ namespace HelloWorld
         {
             if (currentLvl == 6)
             {
-                EndServerRpc(Name.Value);
+                LastWinner.Value = PlayerData.Name;
                 Debug.Log("WIIIIIN");
+                NetworkSceneManager.SwitchScene("LobbyScene");
             }
             else
             {
@@ -748,11 +786,8 @@ namespace HelloWorld
                     {
                         strength = newStat.strength;
                         moveSpeed = newStat.moveSpeed;
-                        maxStamina = newStat.maxStamina;
-                        staminaBar.OnlySetMaxValue(maxStamina);
-
-                        maxHealth = newStat.maxHealth;
-                        healthBar.OnlySetMaxValue(maxHealth);
+                        MaxHealth.Value = newStat.maxHealth;
+                        MaxStamina.Value = newStat.maxStamina;
 
                         currentLvl = newStat.currentLvl;
                         nbrKillLvlUp = newStat.nbrKillLvlUp;
@@ -765,13 +800,6 @@ namespace HelloWorld
                     }
                 }
             }
-        }
-
-        [ServerRpc]
-        private void EndServerRpc(string info)
-        {
-            LastWinner.Value = info;
-            NetworkSceneManager.SwitchScene("LobbyScene");
         }
     }
 }

@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using HelloWorld;
+using MLAPI;
+using TMPro;
 using UnityEngine;
 
 public class ChargeColor : MonoBehaviour
@@ -9,19 +12,23 @@ public class ChargeColor : MonoBehaviour
     public Material chargeMaterial;
     public ParticleSystem particle;
 
+    private Material _mat;
     private bool _isUpdate = false;
     private MeshRenderer _mesh;
 
     private void Start()
     {
-        chargeMaterial.color = Color.white;
-        chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+        _mat = new Material(chargeMaterial);
+        gameObject.GetComponent<MeshRenderer>().material = _mat;
+
+        _mat.color = Color.white;
+        _mat.color = new Vector4(_mat.color.r, _mat.color.g, _mat.color.b, 0.5f);
         _mesh = gameObject.GetComponent<MeshRenderer>();
         _mesh.enabled = false;
     }
     private void Update()
     {
-        if(_isUpdate) chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+        if(_isUpdate) _mat.color = new Vector4(_mat.color.r, _mat.color.g, _mat.color.b, 0.5f);
     }
 
     public void StartCharge()
@@ -33,7 +40,7 @@ public class ChargeColor : MonoBehaviour
     public void StopCharge()
     {
         StopAllCoroutines();
-        chargeMaterial.color = Color.white;
+        _mat.color = Color.white;
         transform.localPosition = Vector3.zero;
         _isUpdate = false;
         _mesh.enabled = false;
@@ -46,7 +53,7 @@ public class ChargeColor : MonoBehaviour
 
     IEnumerator ChangeColor()
     {
-        Color currentColor = chargeMaterial.color;
+        Color currentColor = _mat.color;
         Color goToColor = Color.red;
 
         float elapsedTime = 0f;
@@ -55,14 +62,14 @@ public class ChargeColor : MonoBehaviour
 
         while (elapsedTime < speed)
         {
-            chargeMaterial.color = Color.Lerp(currentColor, goToColor, (elapsedTime / speed));
-            chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+            _mat.color = Color.Lerp(currentColor, goToColor, (elapsedTime / speed));
+            _mat.color = new Vector4(_mat.color.r, _mat.color.g, _mat.color.b, 0.5f);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        chargeMaterial.color = Color.red;
-        chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
-        particle.Play();
+        _mat.color = Color.red;
+        _mat.color = new Vector4(_mat.color.r, _mat.color.g, _mat.color.b, 0.5f);
+        if(transform.parent.parent.GetComponent<PlayerNetwork>().ChargedState.Value == 2) particle.Play();
         yield return null;
         while(Input.GetKey(KeyCode.Space))
         {
