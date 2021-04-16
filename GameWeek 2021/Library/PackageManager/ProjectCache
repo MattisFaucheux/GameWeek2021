@@ -3093,6 +3093,7 @@ m_PackageAssets:
         - 7.5.1
         - 7.5.2
         - 7.5.3
+        - 7.6.0
         - 8.0.1
         - 8.1.0
         - 8.2.0
@@ -3108,6 +3109,7 @@ m_PackageAssets:
         - 10.2.1
         - 10.2.2
         - 10.3.1
+        - 10.3.2
         - 10.4.0
         compatible:
         - 10.4.0
@@ -3135,12 +3137,12 @@ m_PackageAssets:
       entitlements:
         isAllowed: 1
       isAssetStorePackage: 0
-      datePublishedTicks: 0
+      datePublishedTicks: 637511006970000000
       documentationUrl: 
       hasRepository: 1
       repository:
         type: git
-        url: https://github.com/Unity-Technologies/Graphics.git
+        url: git+https://github.com/Unity-Technologies/Graphics.git
         revision: e11ddbccf86bcd7ceaae2c0b8646420d2e53cf80
         path: 
     - packageId: com.unity.shadergraph@10.4.0

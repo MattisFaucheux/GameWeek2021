@@ -280,8 +280,6 @@ namespace HelloWorld
             }
 
             canv.GetChild(2).GetComponent<Text>().text = Name.Value;
-            healthBar.SetValue(Health.Value);
-            staminaBar.SetValue(Stamina.Value);
 
             healthBar.gameObject.SetActive(false);
             staminaBar.gameObject.SetActive(false);
@@ -306,6 +304,9 @@ namespace HelloWorld
 
             currentLvl = 0;
             LevelUp();
+
+            healthBar.SetMaxValue(MaxHealth.Value);
+            staminaBar.SetMaxValue(MaxStamina.Value);
 
             Respawn();
         }
@@ -788,6 +789,8 @@ namespace HelloWorld
                         moveSpeed = newStat.moveSpeed;
                         MaxHealth.Value = newStat.maxHealth;
                         MaxStamina.Value = newStat.maxStamina;
+                        healthBar.SetMaxValue(MaxHealth.Value);
+                        staminaBar.SetMaxValue(MaxStamina.Value);
 
                         currentLvl = newStat.currentLvl;
                         nbrKillLvlUp = newStat.nbrKillLvlUp;
