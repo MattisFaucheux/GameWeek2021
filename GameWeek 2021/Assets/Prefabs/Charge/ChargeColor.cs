@@ -8,24 +8,40 @@ public class ChargeColor : MonoBehaviour
     public float shakeForce;
     public Material chargeMaterial;
     public ParticleSystem particle;
+
+    private bool _isUpdate = false;
+    private MeshRenderer _mesh;
+
     private void Start()
     {
         chargeMaterial.color = Color.white;
         chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+        _mesh = gameObject.GetComponent<MeshRenderer>();
+        _mesh.enabled = false;
     }
     private void Update()
     {
-        if (Input.GetButtonDown("Attack"))
-        {
-            StartCoroutine(ChangeColor());
-        }
-        if(Input.GetButtonUp("Attack"))
-        {
-            StopAllCoroutines();
-            chargeMaterial.color = Color.white;
-            transform.localPosition = Vector3.zero;
-        }
-        chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+        if(_isUpdate) chargeMaterial.color = new Vector4(chargeMaterial.color.r, chargeMaterial.color.g, chargeMaterial.color.b, 0.5f);
+    }
+
+    public void StartCharge()
+    {
+        StartCoroutine(ChangeColor());
+        _isUpdate = true;
+    }
+
+    public void StopCharge()
+    {
+        StopAllCoroutines();
+        chargeMaterial.color = Color.white;
+        transform.localPosition = Vector3.zero;
+        _isUpdate = false;
+        _mesh.enabled = false;
+    }
+
+    public void EnableMesh()
+    {
+        _mesh.enabled = true;
     }
 
     IEnumerator ChangeColor()
@@ -34,6 +50,8 @@ public class ChargeColor : MonoBehaviour
         Color goToColor = Color.red;
 
         float elapsedTime = 0f;
+
+        if (elapsedTime > .2f) _mesh.enabled = true;
 
         while (elapsedTime < speed)
         {
