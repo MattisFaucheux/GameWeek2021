@@ -1,5 +1,9 @@
 sceneSetups:
+<<<<<<< HEAD
 - path: Assets/Scenes/TestScene/Quentin/LobbyScene.unity
+=======
+- path: Assets/Scenes/TestScene/Quentin/MenuScene.unity
+>>>>>>> 7ccb7ec5fcaa5d599cd5bad82f27e5e00b40001c
   isLoaded: 1
   isActive: 1
   isSubScene: 0

@@ -248,8 +248,11 @@ namespace HelloWorld
         });
         #endregion
 
+<<<<<<< HEAD
         public Animator anim;
 
+=======
+>>>>>>> 7ccb7ec5fcaa5d599cd5bad82f27e5e00b40001c
         public override void NetworkStart()
         {
             noRot = transform.GetChild(0);
@@ -509,6 +512,7 @@ namespace HelloWorld
                 Stamina.Value = MaxStamina.Value;
             }
 
+<<<<<<< HEAD
             if(IsBlocking.Value && !anim.GetBool("shield"))
             {
                 anim.SetBool("shield", true);
@@ -518,6 +522,8 @@ namespace HelloWorld
                 anim.SetBool("shield", false);
             }
 
+=======
+>>>>>>> 7ccb7ec5fcaa5d599cd5bad82f27e5e00b40001c
             lastHeading = Vector3.zero;
             lastMovement = Vector3.zero;
 
@@ -537,10 +543,14 @@ namespace HelloWorld
 
         void CheckInputs()
         {
+<<<<<<< HEAD
             if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0)
             {
                 ComputeMove();
             }
+=======
+            if (Input.GetAxis("HorizontalKey") != 0 || Input.GetAxis("VerticalKey") != 0) ComputeMove();
+>>>>>>> 7ccb7ec5fcaa5d599cd5bad82f27e5e00b40001c
 
             CheckAttackInput();
             CheckBlockInput();
@@ -752,8 +762,11 @@ namespace HelloWorld
 
         void Attack(bool attackCharged = false)
         {
+<<<<<<< HEAD
             anim.SetTrigger("Attack");
 
+=======
+>>>>>>> 7ccb7ec5fcaa5d599cd5bad82f27e5e00b40001c
             Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
 
             foreach (Collider enemy in hitEnemies)
