@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using MLAPI;
-using MLAPI.Connection;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using MLAPI.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -36,8 +33,7 @@ namespace HelloWorld
         [SerializeField]
         enPlayerClass playerClass;
 
-        [SerializeField]
-        int currentLvl = 0;
+        public int currentLvl = 0;
 
         public int nbrKillLvlUp = 0;
 
@@ -104,6 +100,8 @@ namespace HelloWorld
 
         [SerializeField]
         LayerMask enemyLayers;
+
+        ChargeColor charge;
         #endregion
 
         #region Block
@@ -117,13 +115,20 @@ namespace HelloWorld
 
         float blockTimer;
 
-        bool isBlocking = false;
-
         [SerializeField]
         int blockChargedAttackStaminaUsed = 20;
 
         [SerializeField]
         int blockBasicAttackStaminaUsed = 10;
+
+        GameObject shield;
+        #endregion
+
+        #region Particle
+        [Header("Particle")]
+
+        [SerializeField]
+        GameObject damageParticle;
         #endregion
 
         #region Other
@@ -201,6 +206,18 @@ namespace HelloWorld
             ReadPermission = NetworkVariablePermission.Everyone
         });
 
+        NetworkVariableInt ChargedState = new NetworkVariableInt(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.Everyone,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
+        NetworkVariableBool IsBlocking = new NetworkVariableBool(new NetworkVariableSettings
+        {
+            WritePermission = NetworkVariablePermission.OwnerOnly,
+            ReadPermission = NetworkVariablePermission.Everyone
+        });
+
         NetworkVariableString LastDeath = new NetworkVariableString(new NetworkVariableSettings
         {
             WritePermission = NetworkVariablePermission.Everyone,
@@ -230,6 +247,9 @@ namespace HelloWorld
         {
             noRot = transform.GetChild(0);
             canv = noRot.GetChild(0);
+            shield = transform.GetChild(4).gameObject;
+            charge = transform.GetChild(5).GetChild(0).GetComponent<ChargeColor>();
+            shield.SetActive(false);
             healthBar = canv.GetChild(0).GetComponent<SliderBar>();
             staminaBar = canv.GetChild(1).GetComponent<SliderBar>();
 
@@ -240,6 +260,7 @@ namespace HelloWorld
             LastDeath.OnValueChanged += OnLastDeathChanged;
             LastInfo.OnValueChanged += OnLastInfoChanged;
             AddKill.OnValueChanged += OnAddKillChanged;
+            ChargedState.OnValueChanged += OnChargedStateChanged;
 
             if (NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject == GetComponent<NetworkObject>())
             {
@@ -308,12 +329,14 @@ namespace HelloWorld
 
             if (!isControlled || newvalue == 0) return;
 
-            if (isBlocking)
+            if (IsBlocking.Value)
             {
                 if (rb) rb.AddForce(Knockback.Value);
                 Stamina.Value = Mathf.Max(Stamina.Value - (IsAttackCharged.Value ? blockChargedAttackStaminaUsed : blockBasicAttackStaminaUsed), 0);
                 return;
             }
+
+            SubmitDamageParticleServerRpc();
 
             Health.Value = Mathf.Max(Health.Value - newvalue, 0);
             if(Health.Value > 0) if (rb) rb.AddForce(Knockback.Value);
@@ -351,6 +374,25 @@ namespace HelloWorld
             AddKill.Value = false;
         }
 
+        private void OnChargedStateChanged(int previousvalue, int newvalue)
+        {
+            switch (newvalue)
+            {
+                case 0:
+                    charge.StopCharge();
+                    break;
+                case 1:
+                    charge.StartCharge();
+                    break;
+                case 2:
+                    charge.EnableMesh();
+                    break;
+                default:
+                    charge.StopCharge();
+                    break;
+            }
+        }
+
         [ClientRpc]
         private void SendInfoClientRpc(string info)
         {
@@ -361,6 +403,20 @@ namespace HelloWorld
         private void SendInfoServerRpc(string info)
         {
             SendInfoClientRpc(info);
+        }
+
+        [ServerRpc]
+        private void SubmitDamageParticleServerRpc()
+        {
+            SubmitDamageParticleClientRpc();
+        }
+
+        [ClientRpc]
+        private void SubmitDamageParticleClientRpc()
+        {
+            GameObject damage = Instantiate(damageParticle, transform.position, Quaternion.identity);
+            damage.GetComponent<ParticleSystem>().Play();
+            Destroy(damage, 1);
         }
 
         private void NetworkSceneManagerOnSceneSwitched()
@@ -399,7 +455,7 @@ namespace HelloWorld
                 {
                     speedMultiplier = attackLoadingSpeedMultiplier;
                 }
-                else if (isBlocking)
+                else if (IsBlocking.Value)
                 {
                     speedMultiplier = blockingSpeedMultiplier;
                 }
@@ -411,6 +467,7 @@ namespace HelloWorld
         void Update()
         {
             noRot.SetPositionAndRotation(transform.position, Quaternion.identity);
+            shield.SetActive(IsBlocking.Value);
 
             if (!isControlled) return;
 
@@ -463,11 +520,12 @@ namespace HelloWorld
             {
                 startAttackLoadTime = Time.time;
                 isAttackLoading = true;
-                Debug.Log("Start attack load");
 
                 canRegenStamina = false;
                 canRegenHealth = false;
                 isUsingSkill = true;
+
+                ChargedState.Value = 1;
 
                 Debug.Log("Start Load Attack");
             }
@@ -492,9 +550,13 @@ namespace HelloWorld
                 canRegenHealth = false;
 
                 isUsingSkill = true;
+
+                ChargedState.Value = 0;
             }
             else if (isAttackLoading)
             {
+                if (Time.time - startAttackLoadTime > .2f) ChargedState.Value = 2;
+
                 canRegenStamina = false;
                 canRegenHealth = false;
 
@@ -508,7 +570,7 @@ namespace HelloWorld
         {
             if (isUsingSkill)
             {
-                if (isBlocking) isBlocking = false;
+                if (IsBlocking.Value) IsBlocking.Value = false;
                 return;
             }
 
@@ -516,19 +578,19 @@ namespace HelloWorld
             {
                 Debug.Log("Start Shield");
 
-                isBlocking = true;
+                IsBlocking.Value = true;
                 isUsingSkill = true;
                 canRegenStamina = false;
                 canRegenHealth = false;
             }
-            else if (isBlocking && Input.GetButtonUp("Block"))
+            else if (IsBlocking.Value && Input.GetButtonUp("Block"))
             {
                 Debug.Log("Release Shield");
 
-                isBlocking = false;
+                IsBlocking.Value = false;
                 isUsingSkill = true;
             }
-            else if (isBlocking)
+            else if (IsBlocking.Value)
             {
                 Debug.Log("Keep Shield");
                 isUsingSkill = true;
@@ -540,7 +602,7 @@ namespace HelloWorld
 
                     if (!UseStamina(blockStaminaUsedPerSec))
                     {
-                        isBlocking = false;
+                        IsBlocking.Value = false;
                         return;
                     }
                 }

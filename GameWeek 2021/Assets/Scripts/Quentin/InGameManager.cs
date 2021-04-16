@@ -1,3 +1,4 @@
+using HelloWorld;
 using MLAPI;
 using MLAPI.SceneManagement;
 using MLAPI.Transports.UNET;
@@ -6,11 +7,22 @@ using UnityEngine.SceneManagement;
 
 public class InGameManager : MonoBehaviour
 {
+    private PlayerNetwork _player;
+
+    void Start()
+    {
+        _player = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.GetComponent<PlayerNetwork>();
+    }
+
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
         StatusLabels();
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost) SceneManager.LoadScene("MenuScene");
+        GUILayout.EndArea();
+        GUILayout.BeginArea(new Rect(Screen.width * .5f - 150, 10, 300, 300));
+        if(_player.currentLvl < 6) GUILayout.Box("Kills to level up: " + _player.nbrKillLvlUp);
+        else GUILayout.Box("One last kill to win!");
         GUILayout.EndArea();
     }
 
