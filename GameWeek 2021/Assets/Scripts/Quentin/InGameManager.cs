@@ -21,7 +21,7 @@ public class InGameManager : MonoBehaviour
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost) SceneManager.LoadScene("MenuScene");
         GUILayout.EndArea();
         GUILayout.BeginArea(new Rect(Screen.width * .5f - 150, 10, 300, 300));
-        if(_player.currentLvl < 6) GUILayout.Box("Kills to level up: " + _player.nbrKillLvlUp);
+        if(_player.currentLvl < 6) GUILayout.Box("Kill(s) to level up: " + (_player.nbrKillLvlUp - _player.killComplete));
         else GUILayout.Box("One last kill to win!");
         GUILayout.EndArea();
     }
